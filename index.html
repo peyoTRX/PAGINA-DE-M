@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba2</title>
+
+    <style>
+        .error-message {
+            color: red;
+            font-size: x-small;
+            font-family: Calibri, sans-serif;
+        }
+    </style>
+
+    <script>
+        function mostrarError(elemento, mensaje) {
+            var errorDiv = document.createElement('div');
+            errorDiv.textContent = mensaje;
+            errorDiv.className = 'error-message';
+            elemento.parentNode.insertBefore(errorDiv, elemento.nextSibling);
+        }
+
+        function validarDatos() {
+            var rutInput = document.getElementById('rutAlumno');
+            var nombreInput = document.getElementById('nombreAlumno');
+            var apellidoPInput = document.getElementById('apellidoPaterno');
+            var apellidoMInput = document.getElementById('apellidoMaterno');
+            var correoInput = document.getElementById('correoAlumno');
+
+            // Limpiar mensajes de error anteriores
+            var erroresAnteriores = document.querySelectorAll('.error-message');
+            erroresAnteriores.forEach(function (error) {
+                error.parentNode.removeChild(error);
+            });
+
+            // Validación del rut
+            var rut = rutInput.value;
+            if (!/^(\d{7,8})-(\d|k|K)$/.test(rut)) {
+                mostrarError(rutInput, 'El rut ingresado no es válido.');
+                return;
+            }
+
+            // Validación del nombre
+            var nombre = nombreInput.value;
+            if (!/^[A-Za-z]{3,15}$/.test(nombre)) {
+                mostrarError(nombreInput, 'El nombre debe tener entre 3 y 15 caracteres y contener solo letras.');
+                return;
+            }
+
+            // Validación del apellido paterno
+            var apellidoP = apellidoPInput.value;
+            if (apellidoP.length < 3 || apellidoP.length > 15 || !/^[A-Z]+$/.test(apellidoP)) {
+                mostrarError(apellidoPInput, 'El apellido debe tener entre 3 y 15 caracteres y contener solo letras mayúsculas.');
+                return;
+            }
+
+            // Validación del apellido materno
+            var apellidoM = apellidoMInput.value;
+            if (apellidoM.length < 3 || apellidoM.length > 15 || !/^[a-z]+$/.test(apellidoM)) {
+                mostrarError(apellidoMInput, 'El apellido debe tener entre 3 y 15 caracteres y contener solo letras minúsculas.');
+                return;
+            }
+
+            // Validación del correo
+            var correo = correoInput.value;
+            if (!/^[A-Za-z][A-Za-z0-9]*@[A-Za-z][A-Za-z0-9]*\.[A-Za-z]{2,3}$/.test(correo)) {
+                mostrarError(correoInput, 'Formato de correo incorrecto. Debe seguir el formato: ejemplo@gmail.com');
+                return;
+            }
+
+            alert('Datos válidos. ¡Formulario listo para enviar!');
+        }
+
+        function calcularPuntos() {
+            var answers = document.querySelectorAll('input[type="radio"]:checked');
+            if (answers.length < 7) {
+                alert('por favor, marque todas preguntas.');
+                return;
+            }
+
+            var puntos = 0;
+            answers.forEach(function(answer) {
+                puntos += parseInt(answer.value);
+            });
+
+            var totalScoreInput = document.getElementById('totalScore');
+            totalScoreInput.value = puntos + ' (' + (puntos >= 4 ? 'Aprobado' : 'No aprobado') + ')';
+            }
+
+            // if (puntos >= 4) {
+            //     alert('Tu puntuacion final es: ' + puntos + '. felicitaciones, aprobaste!');
+            // } else {
+            //     alert('Tu puntuacion final es: ' + puntos + '. lo siento, no aprobaste.');
+            // }
+    </script>
+</head>
+
+<body>
+    <form action="" id="registrarDatosAlumno">
+
+        <!-- Número de Matrícula: Agregar un valor fijo, campo de solo lectura. -->
+        <label for="nMatricula">N° Matricula: </label><br>
+        <input type="number" name="nMatricula" id="nMatricula" value="2345645" readonly required onchange=""> <BR><BR>
+
+        <!-- obligatorio, incorporación automática del guion. Validar con JS. -->
+        <label for="rut">rut: </label><br>
+        <input type="text" name="datosAlumno" id="rutAlumno" name="" placeholder="12.3456.789-0" required> <BR><BR>
+
+        <script>
+            const rutInput = document.getElementById('rutAlumno');
+            
+            rutInput.addEventListener('input', () => {
+              let rut = rutInput.value.replace(/[^\dKk]/g, ''); // Eliminar caracteres que no son números ni la letra K
+              rut = rut.slice(0, -1) + '-' + rut.slice(-1); // Agregar guion después del último número
+              rutInput.value = rut;
+            });
+        </script>
+
+        <!-- Obligatorio, entre 3 y 15 caracteres, solo letras. Usar Pattern. -->
+        <label for="nombreAlumno">Nombre:</label><br>
+        <input type="text" name="datosAlumno" id="nombreAlumno" placeholder="Doe" pattern="[A-Za-z]{3,15}" 
+          title="Debe tener entre 3 y 15 caracteres y contener solo letras" required><br><br>
+
+        <!-- Obligatorio, entre 3 y 15 caracteres, solo letras MAYÚSCULAS. Validar con JS, sin Pattern y sin atributos HTML. -->
+        <label for="apellidoPaterno">Apellido Paterno:</label><br>
+        <input type="text" name="datosAlumno" id="apellidoPaterno" placeholder="Jhon" required><BR><BR>
+
+        <!-- Obligatorio, entre 3 y 15 caracteres, solo letras MINÚSCULAS. Validar con Pattern y atributos HTML. -->
+        <label for="apellidoMaterno">Apellido Materno:</label><br>
+        <input type="text" name="datosAlumno" id="apellidoMaterno" placeholder="Jane" 
+        pattern="[a-z]{3,15}" title="Debe tener entre 3 y 15 caracteres y contener solo letras minúsculas" required><br><br>
+
+        <!-- Debe comenzar con cualquier letra mayúsculas o minúsculas después números y no son obligatorios,
+        luego @ y comenzar con cualquier letra mayúsculas o minúsculas después números y no son obligatorios
+        , un punto y entre 2 y 3 letras para la extensión del país. Validar con JS, sin Pattern y sin atributos HTML. -->
+        <label for="correoAlumno">Correo:</label><br>
+        <input type="text" name="datosAlumno" id="correoAlumno" placeholder="ejemplo@gmail.com"><br><br>
+
+
+        <!-- Botón de Validar -->
+        <button type="button" onclick="validarDatos()">Validar</button>
+    </form>
+
+    <form id="quizForm">
+        <div>
+            <h2>¿Cuál es el color del cielo en un día despejado?</h2>
+            <label><input type="radio" name="q1" value="1"> Azul</label><br>
+            <label><input type="radio" name="q1" value="0"> Rojo</label><br>
+            <label><input type="radio" name="q1" value="0"> Verde</label><br>
+            <label><input type="radio" name="q1" value="0"> Blanco</label><br>
+        </div>
+        <div>
+            <h2>¿Cuál es el resultado de sumar 2 más 2?</h2>
+            <label><input type="radio" name="q2" value="0"> 3</label><br>
+            <label><input type="radio" name="q2" value="0"> 5</label><br>
+            <label><input type="radio" name="q2" value="1"> 4</label><br>
+            <label><input type="radio" name="q2" value="0"> 6</label><br>
+          </div>
+          <div>
+            <h2>¿Cuál es el animal más grande del mundo?</h2>
+            <label><input type="radio" name="q3" value="1"> Ballena Azul</label><br>
+            <label><input type="radio" name="q3" value="0"> Elefante</label><br>
+            <label><input type="radio" name="q3" value="0"> Jirafa</label><br>
+            <label><input type="radio" name="q3" value="0"> Rinoceronte</label><br>
+          </div>
+          <div>
+            <h2>¿Quién escribió la obra "Don Quijote de la Mancha"?</h2>
+            <label><input type="radio" name="q4" value="1"> Miguel de Cervantes</label><br>
+            <label><input type="radio" name="q4" value="0"> William Shakespeare</label><br>
+            <label><input type="radio" name="q4" value="0"> Gabriel García Márquez</label><br>
+            <label><input type="radio" name="q4" value="0"> Leo Tolstoy</label><br>
+          </div>
+          <div>
+            <h2>¿Cuál es el elemento químico más abundante en el universo?</h2>
+            <label><input type="radio" name="q5" value="0"> Oxígeno</label><br>
+            <label><input type="radio" name="q5" value="1"> Hidrógeno</label><br>
+            <label><input type="radio" name="q5" value="0"> Carbono</label><br>
+            <label><input type="radio" name="q5" value="0"> Helio</label><br>
+          </div>
+          <div>
+            <h2>¿Cuál es el resultado de multiplicar 8 por 8?</h2>
+            <label><input type="radio" name="q6" value="0"> 59</label><br>
+            <label><input type="radio" name="q6" value="1"> 64</label><br>
+            <label><input type="radio" name="q6" value="0"> 72</label><br>
+            <label><input type="radio" name="q6" value="0"> 66</label><br>
+          </div>
+          <div>
+            <h2>¿Cuál es el nombre del océano más grande del mundo?</h2>
+            <label><input type="radio" name="q7" value="1"> Océano Pacífico</label><br>
+            <label><input type="radio" name="q7" value="0"> Océano Atlántico</label><br>
+            <label><input type="radio" name="q7" value="0"> Océano Índico</label><br>
+            <label><input type="radio" name="q7" value="0"> Océano Ártico</label><br>
+          </div>
+        <button type="button" onclick="calcularPuntos()">Enviar</button>
+        <br>
+        <label>Puntuacion final:</label>
+        <input type="text" id="totalScore" readonly>
+    </form>
+
+</body>
+</html>
+<!-- peyo -->
